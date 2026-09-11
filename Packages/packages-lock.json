@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "adabru.ble_winrt_dll": {
+      "version": "https://github.com/adabru/BleWinrtDll.git?path=/BleWinrtDll-UnityPackage",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dc2ccd20bf6687250a0f8a3494d6ef87db92ff6a"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 1,

@@ -1,0 +1,49 @@
+# Cartelle generate automaticamente
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# File di grandi dimensioni o sensibili
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Cache di Visual Studio e Gradle
+.vs/
+.gradle/
+
+# File di progetto/soluzione autogenerati
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# File meta generati da Unity
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash report
+sysinfo.txt
+crashlytics-build.properties
+
+# Build e pacchetti
+*.apk
+*.aab
+*.unitypackage
+*.app
