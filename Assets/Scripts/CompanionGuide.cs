@@ -3,20 +3,23 @@ using UnityEngine;
 public class CompanionGuide : MonoBehaviour
 {
     [Header("Impostazioni")]
-    [SerializeField] private int safeThresholdBpm = 85; // Sotto questo valore, il compagno appare
-    [SerializeField] private float floatSpeed = 2f;
-    [SerializeField] private float floatAmplitude = 0.1f;
-    [SerializeField] private float fadeSpeed = 3f;
-    [SerializeField] private float maxScale = 0.3f; // Dimensione finale dell'oggetto
+    private int safeThresholdBpm = 80; // Sotto questo valore, il compagno appare
+    private float floatSpeed = 2f;
+    private float floatAmplitude = 0.15f;
+    private float fadeSpeed = 3f;
+    private float maxScale = 1f; // Dimensione finale dell'oggetto
 
     private Vector3 startLocalPos;
     private Vector3 targetScale;
 
+    public GameObject heartRateSimulator; // Riferimento allo script HeartRateSimulator
+
     void Start()
     {
         startLocalPos = transform.localPosition;
-        transform.localScale = Vector3.zero;
         targetScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+
     }
 
     void Update()
@@ -27,6 +30,7 @@ public class CompanionGuide : MonoBehaviour
 
         // Apparizione e scomparsa fluida
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * fadeSpeed);
+        UpdateHeartRate(heartRateSimulator.GetComponent<HeartRateSimulator>().currentBPM);
     }
 
     public void UpdateHeartRate(int currentBpm)
