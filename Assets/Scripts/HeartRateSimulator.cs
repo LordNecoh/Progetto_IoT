@@ -10,7 +10,7 @@ public class HeartRateSimulator : MonoBehaviour
 
     [Header("Dinamiche di Fluttuazione")]
     public bool isStressed = false; // Se true, il battito sale verso peakBPM. Se false, scende verso restingBPM.
-    private bool autoCycle = true;   // Alterna automaticamente salita e discesa per testare il sistema
+    private bool autoCycle = false;   // Alterna automaticamente salita e discesa per testare il sistema
     private float cycleDuration = 25f; // Quanti secondi dura una fase (salita o discesa)
 
     private float dataTimer = 0f;
