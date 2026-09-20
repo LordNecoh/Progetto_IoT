@@ -789,7 +789,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.084
+      value: -0.147
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3839,6 +3839,7 @@ GameObject:
   - component: {fileID: 1101550287}
   - component: {fileID: 1101550286}
   - component: {fileID: 1101550290}
+  - component: {fileID: 1101550291}
   m_Layer: 5
   m_Name: Simulation_UI
   m_TagString: Untagged
@@ -3859,8 +3860,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster
   m_IgnoreReversedGraphics: 0
-  m_CheckFor2DOcclusion: 1
-  m_CheckFor3DOcclusion: 1
+  m_CheckFor2DOcclusion: 0
+  m_CheckFor3DOcclusion: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 0
@@ -3944,6 +3945,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3331a615911afd2499375ee024948f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimulationUI
+--- !u!114 &1101550291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101550285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &1112751504
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6354,7 +6372,7 @@ MonoBehaviour:
   m_TrackedDeviceDragThresholdMultiplier: 2
   m_TrackedScrollDeltaMultiplier: 5
   m_NonTrackedScrollDeltaMultiplier: 6
-  m_BypassUIToolkitEvents: 0
+  m_BypassUIToolkitEvents: 1
   m_PrioritizeDistanceSorting: 0
   m_ActiveInputMode: 0
   m_EnableXRInput: 1
@@ -7003,7 +7021,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 8.8, y: -72.5}
+  m_AnchoredPosition: {x: 32.6, y: -72.4}
   m_SizeDelta: {x: 42.15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1716867851
@@ -7027,7 +7045,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.14509805, g: 0.73333335, b: 0.8862745, a: 1}
+    m_NormalColor: {r: 0.2028302, g: 1, b: 0.9205784, a: 0.8784314}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}

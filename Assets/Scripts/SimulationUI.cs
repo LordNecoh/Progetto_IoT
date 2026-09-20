@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class SimulationUI : MonoBehaviour
 {
@@ -8,7 +10,6 @@ public class SimulationUI : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        Console.WriteLine("Tornando al menu principale...");
         SceneManager.LoadScene(MenuSceneName, LoadSceneMode.Single);
     }
 }
