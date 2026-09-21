@@ -6,11 +6,11 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class MainMenuManager : MonoBehaviour
 {
-    private string simSceneName = "SimulationScene";
+    private readonly string SimSceneName = "SimulationScene";
 
     public void IniziaSimulazione()
     {
-        SceneManager.LoadScene(simSceneName, LoadSceneMode.Single);
+        SceneManager.LoadScene(SimSceneName, LoadSceneMode.Single);
     }
 
     public void Esci()

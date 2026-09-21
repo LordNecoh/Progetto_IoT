@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class SimulationUI : MonoBehaviour
 {
-    private string MenuSceneName = "MainMenu";
+    private readonly string MenuSceneName = "MainMenu";
 
     public void BackToMainMenu()
     {
