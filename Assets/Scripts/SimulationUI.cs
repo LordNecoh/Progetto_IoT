@@ -1,58 +1,26 @@
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class UDPHeartRateReceiver : MonoBehaviour
+public class SimulationUI : MonoBehaviour
 {
-    private readonly int listenPort = 5000;
-    public int currentHeartRate = 0;
+    [Header("Riferimenti")]
+    public GazeTracker trackerSguardo; // Trascina qui l'oggetto con il GazeTracker
+    public string nomeScenaMenu = "MainMenu"; // Inserisci il nome esatto della scena del menù
 
-    private UdpClient udpClient;
-    private Thread receiveThread;
-    private bool isRunning = false;
-
-    void Start()
+    // Questa funzione va collegata all'evento OnClick() del bottone "Esci"
+    public void EsciDallaSimulazione()
     {
-        isRunning = true;
-        receiveThread = new Thread(new ThreadStart(ReceiveData));
-        receiveThread.IsBackground = true;
-        receiveThread.Start();
-    }
-
-    private void ReceiveData()
-    {
-        udpClient = new UdpClient(listenPort);
-        IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, listenPort);
-
-        while (isRunning)
+        // 1. Salva il report CSV prima di cambiare scena
+        if (trackerSguardo != null)
         {
-            try
-            {
-                // Mette in pausa il thread finché non arriva un pacchetto
-                byte[] data = udpClient.Receive(ref anyIP);
-                string text = Encoding.UTF8.GetString(data).Trim();
-
-                if (int.TryParse(text, out int hr))
-                {
-                    currentHeartRate = hr;
-                }
-            }
-            catch (Exception e)
-            {
-                if (isRunning) Debug.LogWarning($"UDP Error: {e.Message}");
-            }
+            trackerSguardo.SaveCSVReport();
         }
-    }
-
-    void OnDestroy()
-    {
-        isRunning = false;
-        if (udpClient != null)
+        else
         {
-            udpClient.Close(); // Chiudere il client sblocca il thread dalla funzione Receive
+            Debug.LogWarning("GazeTracker non assegnato in SimulationUI!");
         }
+
+        // 2. Carica la scena del menù principale
+        SceneManager.LoadScene(nomeScenaMenu, LoadSceneMode.Single);
     }
 }
