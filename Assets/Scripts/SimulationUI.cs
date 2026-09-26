@@ -4,16 +4,25 @@ using UnityEngine.SceneManagement;
 public class SimulationUI : MonoBehaviour
 {
     [Header("Riferimenti")]
-    public GazeTracker trackerSguardo; // Trascina qui l'oggetto con il GazeTracker
+    private DataSaver dataSaver;
     public string nomeScenaMenu = "MainMenu"; // Inserisci il nome esatto della scena del menù
+    
+    private void Start()
+    {
+        dataSaver = GameObject.Find("GameManager").GetComponent<DataSaver>();
+        if (dataSaver == null)
+        {
+            Debug.LogError("SimulationUI: DataSaver non trovato nel GameManager!");
+        }
+    }
 
     // Questa funzione va collegata all'evento OnClick() del bottone "Esci"
     public void EsciDallaSimulazione()
     {
         // 1. Salva il report CSV prima di cambiare scena
-        if (trackerSguardo != null)
+        if (dataSaver != null)
         {
-            trackerSguardo.SaveCSVReport();
+            dataSaver.SaveCSVReport();
         }
         else
         {

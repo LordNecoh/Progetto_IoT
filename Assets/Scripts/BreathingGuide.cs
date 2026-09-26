@@ -15,10 +15,11 @@ public class BreathingGuide : MonoBehaviour
     private bool isActive = false;
     private Renderer objRenderer;
 
-    public GameObject heartRateSimulator; // Riferimento allo script HeartRateSimulator
+    public GameObject GameManager; // Riferimento allo script HeartRateSimulator
 
     void Start()
     {
+        GameManager = GameObject.Find("GameManager");
         objRenderer = GetComponent<Renderer>();
         transform.localScale = Vector3.zero;
     }
@@ -29,7 +30,7 @@ public class BreathingGuide : MonoBehaviour
 
     void Update()
     {
-        UpdateHeartRate(heartRateSimulator.GetComponent<HeartRateSimulator>().currentBPM);
+        UpdateHeartRate(GameManager.GetComponent<UDPReceiver>().currentHeartRate);
         if (isActive)
         {
             // Calcola l'oscillazione sinusoidale da 0 a 1 nel tempo del ciclo

@@ -12,10 +12,15 @@ public class CompanionGuide : MonoBehaviour
     private Vector3 startLocalPos;
     private Vector3 targetScale;
 
-    public GameObject heartRateSimulator; // Riferimento allo script HeartRateSimulator
+    private GameObject GameManager;
 
     void Start()
     {
+        GameManager = GameObject.Find("GameManager");
+        if(GameManager == null)
+        {
+            Debug.LogError("GameManager non trovato! Assicurati che ci sia un oggetto chiamato 'GameManager' nella scena.");
+        }
         startLocalPos = transform.localPosition;
         targetScale = transform.localScale;
         transform.localScale = Vector3.zero;
@@ -30,7 +35,7 @@ public class CompanionGuide : MonoBehaviour
 
         // Apparizione e scomparsa fluida
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * fadeSpeed);
-        UpdateHeartRate(heartRateSimulator.GetComponent<HeartRateSimulator>().currentBPM);
+        UpdateHeartRate(GameManager.GetComponent<UDPReceiver>().currentHeartRate);
     }
 
     public void UpdateHeartRate(int currentBpm)

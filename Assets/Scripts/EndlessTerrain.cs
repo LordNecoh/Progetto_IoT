@@ -2,12 +2,22 @@ using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
-    private float speed = 5f;
+    private SpeedCalculator speedCalculator;
     private float terrainLength = 173f;
 
+    private void Start()
+    {
+        speedCalculator = GameObject.Find("GameManager").GetComponent<SpeedCalculator>();
+        if(speedCalculator == null)
+        {
+            Debug.LogError("SpeedCalculator non trovato! Assicurati che l'oggetto 'GameManager' abbia il componente SpeedCalculator.");
+        }
+    }
     void Update()
     {
-        transform.Translate(Vector3.back * speed * Time.deltaTime);
+        float currentSpeed = speedCalculator != null ? speedCalculator.currentSpeed : 0f;
+
+        transform.Translate(Vector3.back * currentSpeed * Time.deltaTime);
 
         if (transform.position.z <= -terrainLength)
         {
