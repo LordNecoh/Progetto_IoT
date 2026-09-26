@@ -870,6 +870,9 @@ GameObject:
   m_Component:
   - component: {fileID: 447324702}
   - component: {fileID: 447324701}
+  - component: {fileID: 447324703}
+  - component: {fileID: 447324704}
+  - component: {fileID: 447324705}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -908,6 +911,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &447324703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447324700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a534e867f57282e4990a02c6ce598112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedCalculator
+  currentSpeed: 0
+--- !u!114 &447324704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447324700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3534c2b04ee9a3c4aaa6e986665acc0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UbidotsStreamer
+  token: BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH
+  deviceLabel: visore-vr
+  sendInterval: 2
+  gazeTracker: {fileID: 1782147980}
+--- !u!114 &447324705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447324700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ca5dd34d506b2468215f198f5f6468, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataSaver
+  gazeTracker: {fileID: 1782147980}
 --- !u!1001 &451510250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3373,7 +3418,7 @@ MonoBehaviour:
   minScale: 0.2
   maxScale: 0.6
   fadeSpeed: 2
-  heartRateSimulator: {fileID: 1646834515}
+  GameManager: {fileID: 0}
 --- !u!1001 &774906880
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3996,7 +4041,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3331a615911afd2499375ee024948f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimulationUI
-  trackerSguardo: {fileID: 1782147980}
   nomeScenaMenu: MainMenu
 --- !u!114 &1101550291
 MonoBehaviour:
@@ -6487,8 +6531,8 @@ GameObject:
   - component: {fileID: 1462362460}
   - component: {fileID: 1462362463}
   - component: {fileID: 1462362462}
-  - component: {fileID: 1462362464}
   - component: {fileID: 1462362465}
+  - component: {fileID: 1462362466}
   m_Layer: 0
   m_Name: BPM_UI
   m_TagString: Untagged
@@ -6563,20 +6607,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &1462362464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1462362459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3331a615911afd2499375ee024948f1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimulationUI
-  trackerSguardo: {fileID: 0}
-  nomeScenaMenu: MainMenu
 --- !u!114 &1462362465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6596,6 +6626,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!114 &1462362466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462362459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d00efa0f84858148a4f717f5c72ab5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BPMDisplay
 --- !u!4 &1473720156 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7080972552677927687, guid: 0ab22827d0f3f0b40a97e9430d684283, type: 3}
@@ -6854,7 +6896,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeartRateSimulator
   currentBPM: 70
+  restingBPM: 70
+  peakBPM: 100
   isStressed: 0
+  autoCycle: 0
+  cycleDuration: 25
+  dataTimer: 0
+  cycleTimer: 0
+  sogliaCavallo: 90
+  horseObjet: {fileID: 0}
+  horse: {fileID: 0}
   bpmText: {fileID: 290397162}
 --- !u!4 &1646834517
 Transform:
@@ -7521,6 +7572,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GazeTracker
   xrOriginRoot: {fileID: 1768499813}
+  currentVisualAngle: 0
+  currentDirection: '[FORWARD]'
+  currentLookedObject: None
 --- !u!1001 &1839535552
 PrefabInstance:
   m_ObjectHideFlags: 0
