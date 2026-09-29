@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 2c59246f075efff4eacdd481ad75421a
-PrefabImporter:
+guid: 59573b088aaea0442bf29e0a0e9d1339
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -10,5 +11,5 @@ AssetOrigin:
   productId: 187052
   packageName: Low Poly Environment - Nature Free - LOWPOLY MEDIEVAL FANTASY SERIES
   packageVersion: 1.1.1
-  assetPath: Assets/Polytope Studio/Lowpoly_Village/Prefabs/Modular/Fence/PT_Modular_Fence_Wood_03.prefab
+  assetPath: Assets/Polytope Studio/Lowpoly_Environments/Sources/Materials/PT_Skybox_mat.mat
   uploadId: 916120

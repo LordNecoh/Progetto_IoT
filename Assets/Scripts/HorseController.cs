@@ -5,7 +5,7 @@ public class HorseController : MonoBehaviour
 {
     [Header("Condizioni Battito")]
     private UDPReceiver udpReceiver; 
-    private readonly int sogliaBattito = 80; 
+    private readonly int sogliaBattito = 100; 
 
     [Header("Impostazioni Cavallo")]
     public Animator anim;
@@ -70,7 +70,7 @@ public class HorseController : MonoBehaviour
     private IEnumerator WaitIfStressed()
     {
         // Se il battito supera la soglia (e ignoriamo lo 0 di quando il sensore è disconnesso)
-        if (udpReceiver != null && udpReceiver.currentHeartRate > sogliaBattito && udpReceiver.currentHeartRate > 0)
+        if (udpReceiver != null && udpReceiver.currentHeartRate > sogliaBattito )
         {
             anim.speed = 0; // Mette in pausa l'animazione del cavallo
 
