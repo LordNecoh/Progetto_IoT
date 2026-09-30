@@ -9,7 +9,7 @@ using UnityEngine;
 public class UDPReceiver : MonoBehaviour
 {
     [Header("Impostazioni di Rete")]
-    public int port = 8888; // Assicurati che corrisponda a quella dell'app Howdy
+    public int port = 8888; //Check corrispondence with howdy app!!!
 
     private UdpClient udpClient;
     private Thread receiveThread;
@@ -105,7 +105,6 @@ public class UDPReceiver : MonoBehaviour
         return 0f;
     }
 
-    // Estrae in modo sicuro il valore numerico dalla stringa
     private int ExtractSingleValue(string json)
     {
         string searchStr = "\"Value\":";

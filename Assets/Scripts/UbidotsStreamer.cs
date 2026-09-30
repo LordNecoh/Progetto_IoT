@@ -6,9 +6,9 @@ using UnityEngine.Networking;
 public class UbidotsStreamer : MonoBehaviour
 {
     [Header("Credenziali Ubidots")]
-    public string token = "BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH";
-    public string deviceLabel = "visore-vr";
-    public float sendInterval = 1.0f; 
+    private readonly string token = "BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH";
+    private readonly string deviceLabel = "visore-vr";
+    private readonly float sendInterval = 1.0f; 
 
     [Header("Sorgenti Dati (Trascina gli script qui)")]
     private UDPReceiver udpReceiver;
@@ -31,25 +31,23 @@ public class UbidotsStreamer : MonoBehaviour
     {
         while (isStreaming)
         {
-            // Controlla che i riferimenti ci siano per evitare errori
             if (udpReceiver != null && speedCalculator != null && gazeTracker != null)
             {
-                // Estrae i valori dai vari script
+                //Medical values
                 int heartRate = udpReceiver.currentHeartRate;
                 int respRate = udpReceiver.currentRespiratoryRate;
                 float speed = speedCalculator.currentSpeed;
 
-                // Variabili Gaze
+                //Gaze variables
                 float angle = gazeTracker.currentVisualAngle;
                 string dir = gazeTracker.currentDirection;
                 string obj = gazeTracker.currentLookedObject;
 
-                
 
                 int directionNum = dir == "[FORWARD]" ? 1 : 0;
 
-                // Crea il JSON dinamico per Ubidots. 
-                // "context" serve a Ubidots per salvare testo allegato a un valore numerico (usiamo l'angolo)
+                //JSON payload for Ubidots
+                // "context" is used by Ubidots to save text attached to a numeric value (we use the angle)
                 string jsonPayload = $@"{{
                     ""heart_rate"": {heartRate},
                     ""respiratory_rate"": {respRate},
@@ -66,13 +64,11 @@ public class UbidotsStreamer : MonoBehaviour
 
                 //Debug.Log($"UbidotsStreamer: JSON Payload: {jsonPayload}");
 
-
                 yield return StartCoroutine(PostToUbidots(jsonPayload));
             }
             else
             {
                 Debug.LogWarning("UbidotsStreamer: Mancano i riferimenti agli script sorgente (UDP, Speed, Gaze).");
-                //Manda informazione su quale manca
                 if (udpReceiver == null) Debug.LogWarning("UbidotsStreamer: UDPReceiver non trovato.");
                 if (speedCalculator == null) Debug.LogWarning("UbidotsStreamer: SpeedCalculator non trovato.");
                 if (gazeTracker == null) Debug.LogWarning("UbidotsStreamer: GazeTracker non trovato.");
@@ -99,7 +95,7 @@ public class UbidotsStreamer : MonoBehaviour
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"[UBIDOTS ERRORE] {request.error}");
+                Debug.LogError($"[UBIDOTS ERROR] {request.error}");
             }
         }
     }
