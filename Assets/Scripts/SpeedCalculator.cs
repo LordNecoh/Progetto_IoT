@@ -6,11 +6,11 @@ public class SpeedCalculator : MonoBehaviour
     private UDPReceiver udpReceiver;
 
     [Header("Impostazioni di Calcolo")]
-    private readonly float gravitaBase = 9.81f;         // Accelerazione di gravità standard
-    private readonly float sogliaMovimento = 1.5f;      // Sotto questo valore l'utente è considerato fermo
-    private readonly float moltiplicatoreVelocita = 1.2f; // Regola questo valore per tarare la velocità virtuale
+    private readonly float baseGravity = 9.81f;         // Standard base gravity value in m/s²
+    private readonly float movementThreshold = 1.5f;      // Under this threshold, the movement is considered negligible
+    private readonly float speedMultiplier = 1.2f; 
 
-    private readonly float fluidita = 2f;               // Quanto velocemente la velocità si adatta (smussamento)
+    private readonly float smoothing = 2f;               // How quickly the speed adapts (smoothing)
 
     [Header("Risultati")]
     public float currentSpeed = 0f;           // La velocità calcolata (es. in m/s o km/h)
@@ -26,16 +26,16 @@ public class SpeedCalculator : MonoBehaviour
     {
         if (udpReceiver == null) return;
 
-        float magnitudo = udpReceiver.currentAcceleration.magnitude;
-        float forzaMovimento = Mathf.Abs(magnitudo - gravitaBase);
+        float magnitude = udpReceiver.currentAcceleration.magnitude;
+        float movementForce = Mathf.Abs(magnitude - baseGravity);
 
-        if (forzaMovimento < sogliaMovimento)
+        if (movementForce < movementThreshold)
         {
-            forzaMovimento = 0f;
+            movementForce  = 0f;
         }
 
-        intensitaSmussata = Mathf.Lerp(intensitaSmussata, forzaMovimento, Time.deltaTime * fluidita);
+        intensitaSmussata = Mathf.Lerp(intensitaSmussata, movementForce, Time.deltaTime * smoothing);
 
-        currentSpeed = intensitaSmussata * moltiplicatoreVelocita;
+        currentSpeed = intensitaSmussata * speedMultiplier;
     }
 }

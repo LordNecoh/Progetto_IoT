@@ -9,7 +9,7 @@ using UnityEngine;
 public class UDPReceiver : MonoBehaviour
 {
     [Header("Impostazioni di Rete")]
-    public int port = 8888; // Assicurati che corrisponda a quella dell'app Howdy
+    public int port = 8888; //Check corrispondence with howdy app!!!
 
     private UdpClient udpClient;
     private Thread receiveThread;
@@ -21,6 +21,9 @@ public class UDPReceiver : MonoBehaviour
     public int currentHeartRate = 0;
     public int currentRespiratoryRate = 0;
     public Vector3 currentAcceleration = Vector3.zero;
+    
+    // NUOVO: Variabile per salvare l'array dell'ECG in formato testo
+    public string currentEcgData = "[]"; 
 
     void Start()
     {
@@ -67,6 +70,11 @@ public class UDPReceiver : MonoBehaviour
             {
                 currentRespiratoryRate = ExtractSingleValue(cleanJson);
             }
+            // NUOVO: Dati ECG (MeasureType 6)
+            else if (cleanJson.Contains("\"MeasureType\":6"))
+            {
+                currentEcgData = ExtractArrayString(cleanJson);
+            }
             // Dati Telefono (Accelerometro)
             else if (cleanJson.Contains("android.sensor.accelerometer"))
             {
@@ -105,7 +113,6 @@ public class UDPReceiver : MonoBehaviour
         return 0f;
     }
 
-    // Estrae in modo sicuro il valore numerico dalla stringa
     private int ExtractSingleValue(string json)
     {
         string searchStr = "\"Value\":";
@@ -114,7 +121,7 @@ public class UDPReceiver : MonoBehaviour
 
         startIndex += searchStr.Length;
         int endIndex = json.IndexOf(",", startIndex);
-        if (endIndex == -1) endIndex = json.IndexOf("}", startIndex); // Se è l'ultimo elemento
+        if (endIndex == -1) endIndex = json.IndexOf("}", startIndex); // Se Ã¨ l'ultimo elemento
 
         string valueStr = json.Substring(startIndex, endIndex - startIndex).Trim();
 
@@ -124,6 +131,20 @@ public class UDPReceiver : MonoBehaviour
         }
 
         return 0;
+    }
+
+    // NUOVO: Estrae l'intero array dell'ECG come stringa testuale (es. "[-0.02, -0.019, ... ]")
+    private string ExtractArrayString(string json)
+    {
+        int startIndex = json.IndexOf("\"Value\":[");
+        if (startIndex == -1) return "[]";
+        
+        startIndex += 8; // Salta la parola "Value": e si posiziona sulla parentesi [
+        int endIndex = json.IndexOf("]", startIndex);
+        if (endIndex == -1) return "[]";
+
+        // Restituisce la stringa compresa tra le parentesi quadre
+        return json.Substring(startIndex, endIndex - startIndex + 1);
     }
 
     void OnApplicationQuit()

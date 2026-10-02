@@ -5,7 +5,7 @@ public class SimulationUI : MonoBehaviour
 {
     [Header("Riferimenti")]
     private DataSaver dataSaver;
-    public string nomeScenaMenu = "MainMenu"; // Inserisci il nome esatto della scena del menù
+    public string nomeScenaMenu = "MainMenu";
     
     private void Start()
     {
@@ -16,10 +16,8 @@ public class SimulationUI : MonoBehaviour
         }
     }
 
-    // Questa funzione va collegata all'evento OnClick() del bottone "Esci"
     public void EsciDallaSimulazione()
     {
-        // 1. Salva il report CSV prima di cambiare scena
         if (dataSaver != null)
         {
             dataSaver.SaveCSVReport();
@@ -29,7 +27,6 @@ public class SimulationUI : MonoBehaviour
             Debug.LogWarning("GazeTracker non assegnato in SimulationUI!");
         }
 
-        // 2. Carica la scena del menù principale
         SceneManager.LoadScene(nomeScenaMenu, LoadSceneMode.Single);
     }
 }
