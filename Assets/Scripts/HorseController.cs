@@ -15,6 +15,7 @@ public class HorseController : MonoBehaviour
     private void Start()
     {
         udpReceiver = GameObject.Find("GameManager").GetComponent<UDPReceiver>();
+        StartSequence();
     }
 
     public void StartSequence()
@@ -31,7 +32,7 @@ public class HorseController : MonoBehaviour
         float timer = 2f;
         while (timer > 0)
         {
-            yield return StartCoroutine(WaitIfStressed()); 
+            yield return StartCoroutine(WaitIfStressed());
 
             transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
             timer -= Time.deltaTime;
@@ -70,7 +71,7 @@ public class HorseController : MonoBehaviour
     private IEnumerator WaitIfStressed()
     {
         // Se il battito supera la soglia (e ignoriamo lo 0 di quando il sensore è disconnesso)
-        if (udpReceiver != null && udpReceiver.currentHeartRate > sogliaBattito )
+        if (udpReceiver != null && udpReceiver.currentHeartRate > sogliaBattito)
         {
             anim.speed = 0; // Mette in pausa l'animazione del cavallo
 
