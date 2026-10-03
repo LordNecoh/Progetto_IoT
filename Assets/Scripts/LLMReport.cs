@@ -2,14 +2,15 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using TMPro;
+using UnityEngine.UI;
 
 public class LLMReport : MonoBehaviour
 {
     [Header("Impostazioni API Gemini")]
-    private readonly string apiKey = "";   //Inserire la propria API Key qui
+    private readonly string apiKey = "AQ.Ab8RN6JCtgWyB5QOHCO6QhhuvNma6AlAGWr4D5n0ar8P4J2K3A";   //Inserire la propria API Key qui
     private readonly string modelName = "gemini-3.1-flash-lite"; 
 
     [Header("UI Elementi")]
@@ -70,6 +71,9 @@ public class LLMReport : MonoBehaviour
                 if (response != null && response.candidates != null && response.candidates.Length > 0)
                 {
                     reportText.text = response.candidates[0].content.parts[0].text;
+                    yield return null; // Attendere un frame per assicurarsi che il layout sia aggiornato
+                    Canvas.ForceUpdateCanvases();
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(reportText.transform.parent.GetComponent<RectTransform>());
                 }
                 else
                 {
