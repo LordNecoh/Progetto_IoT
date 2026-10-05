@@ -3,7 +3,8 @@ using UnityEngine;
 public class EndlessTerrain : MonoBehaviour
 {
     private SpeedCalculator speedCalculator;
-    private float terrainLength = 173f;
+    private readonly float terrainLength = 173f;
+    private readonly float speedMultiplier = 1.70f; //Per regolare la velocità del terreno rispetto alla velocità del giocatore
 
     private void Start()
     {
@@ -17,7 +18,7 @@ public class EndlessTerrain : MonoBehaviour
     {
         float currentSpeed = speedCalculator != null ? speedCalculator.currentSpeed : 0f;
 
-        transform.Translate(Vector3.back * currentSpeed * Time.deltaTime);
+        transform.Translate(Vector3.back * currentSpeed * Time.deltaTime * speedMultiplier);
 
         if (transform.position.z <= -terrainLength)
         {

@@ -880,6 +880,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a534e867f57282e4990a02c6ce598112, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedCalculator
+  baseGravity: 9.81
+  stepThreshold: 1.2
+  stepCooldown: 0.35
+  strideLength: 0.7
+  stepCount: 0
+  totalDistance: 0
   currentSpeed: 0
 --- !u!114 &447324704
 MonoBehaviour:
@@ -8457,11 +8463,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.497
+      value: 1.401
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.321
+      value: 0.818
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalRotation.w

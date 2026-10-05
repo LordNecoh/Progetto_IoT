@@ -6,7 +6,6 @@ using UnityEngine.Networking;
 public class UbidotsStreamer : MonoBehaviour
 {
     [Header("Credenziali Ubidots")]
-    private readonly string token = "BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH";
     private readonly string deviceLabel = "visore-vr";
     public readonly float sendInterval = 4.0f; 
 
@@ -104,7 +103,7 @@ public class UbidotsStreamer : MonoBehaviour
             request.downloadHandler = new DownloadHandlerBuffer();
 
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("X-Auth-Token", token);
+            request.SetRequestHeader("X-Auth-Token", SecretsManager.UbidotsKey);
 
             yield return request.SendWebRequest();
 

@@ -10,8 +10,8 @@ using UnityEngine.UI;
 public class LLMReport : MonoBehaviour
 {
     [Header("Impostazioni API Gemini")]
-    private readonly string apiKey = "AQ.Ab8RN6JCtgWyB5QOHCO6QhhuvNma6AlAGWr4D5n0ar8P4J2K3A";   //Inserire la propria API Key qui
-    private readonly string modelName = "gemini-3.1-flash-lite"; 
+    private readonly string primaryModel = "gemini-3.1-flash-lite";
+    private readonly string fallbackModel = "gemma-4-31b-it";
 
     [Header("UI Elementi")]
     public GameObject popupPanel;
@@ -30,8 +30,6 @@ public class LLMReport : MonoBehaviour
 
     private IEnumerator SendToGemini()
     {
-        reportText.text = "Analisi in corso con Gemini...\nAttendere prego.";
-
         DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath);
         FileInfo lastFile = directory.GetFiles("SimulationReport_*.csv")
                                      .OrderByDescending(f => f.LastWriteTime)
@@ -50,40 +48,57 @@ public class LLMReport : MonoBehaviour
         {
             contents = new Content[] { new Content { parts = new Part[] { new Part { text = prompt } } } }
         };
-
         string jsonData = JsonUtility.ToJson(requestData);
 
-        // L'URL ora usa la variabile modelName
-        string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={apiKey}";
+        // Lista dei modelli da provare in ordine
+        string[] modelsToTry = { primaryModel, fallbackModel };
+        bool success = false;
 
-        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        foreach (string currentModel in modelsToTry)
         {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+            reportText.text = $"Analisi in corso con {currentModel}...\nAttendere prego.";
+            string url = $"https://generativelanguage.googleapis.com/v1beta/models/{currentModel}:generateContent?key={SecretsManager.GeminiKey}";
 
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
+            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
             {
-                GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(request.downloadHandler.text);
-                if (response != null && response.candidates != null && response.candidates.Length > 0)
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
                 {
-                    reportText.text = response.candidates[0].content.parts[0].text;
-                    yield return null; // Attendere un frame per assicurarsi che il layout sia aggiornato
-                    Canvas.ForceUpdateCanvases();
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(reportText.transform.parent.GetComponent<RectTransform>());
+                    GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(request.downloadHandler.text);
+                    if (response != null && response.candidates != null && response.candidates.Length > 0)
+                    {
+                        reportText.text = response.candidates[0].content.parts[0].text;
+                        yield return null; // Attendere un frame per assicurarsi che il layout sia aggiornato
+                        Canvas.ForceUpdateCanvases();
+                        LayoutRebuilder.ForceRebuildLayoutImmediate(reportText.transform.parent.GetComponent<RectTransform>());
+                        success = true;
+                        break; // Esce dal ciclo, richiesta completata
+                    }
+                }
+                else if (request.responseCode == 429 || request.responseCode == 503)
+                {
+                    // 429 = Too Many Requests, 503 = Service Unavailable
+                    Debug.LogWarning($"[LLMReport] Modello {currentModel} non disponibile. Tento il prossimo...");
+                    continue; // Passa al prossimo modello nel foreach
                 }
                 else
                 {
-                    reportText.text = "Nessun dato restituito dall'API.";
+                    // Altri errori (es. 400 Bad Request) bloccano l'esecuzione
+                    reportText.text = $"Errore con {currentModel}: " + request.responseCode + "\n" + request.downloadHandler.text;
+                    break;
                 }
             }
-            else
-            {
-                reportText.text = "Errore: " + request.responseCode + "\n" + request.downloadHandler.text;
-            }
+        }
+
+        if (!success && reportText.text.Contains("Analisi in corso"))
+        {
+            reportText.text = "Tutti i modelli sono attualmente sovraccarichi o non disponibili. Riprova tra poco.";
         }
     }
 
