@@ -4,8 +4,8 @@ using UnityEngine;
 public class HorseController : MonoBehaviour
 {
     [Header("Condizioni Battito")]
-    private UDPReceiver udpReceiver; 
-    private readonly int sogliaBattito = 100; 
+    private UDPReceiver udpReceiver;
+    private readonly int sogliaBattito = 100;
 
     [Header("Impostazioni Cavallo")]
     public Animator anim;
@@ -27,58 +27,46 @@ public class HorseController : MonoBehaviour
     {
         isRunning = true;
 
-        // 1. Cammina in avanti
-        anim.SetTrigger("doWalk");
-        float timer = 2f;
-        while (timer > 0)
+        // Loop infinito
+        while (true)
         {
-            yield return StartCoroutine(WaitIfStressed());
+            // 1. Cammina in avanti
+            anim.SetTrigger("doWalk");
+            float timer = 2f;
+            while (timer > 0)
+            {
+                yield return StartCoroutine(WaitIfStressed());
 
-            transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
-            timer -= Time.deltaTime;
-            yield return null;
+                transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            // 2. Mangia l'erba
+            anim.SetTrigger("doEat");
+            float eatTimer = 5f;
+            while (eatTimer > 0)
+            {
+                yield return StartCoroutine(WaitIfStressed());
+
+                eatTimer -= Time.deltaTime;
+                yield return null;
+            }
+
+            // 3. Si gira di 180 gradi (al prossimo giro camminerà per tornare indietro)
+            transform.Rotate(0, 180, 0);
         }
-
-        // 2. Mangia l'erba
-        anim.SetTrigger("doEat");
-        float eatTimer = 5f;
-        while (eatTimer > 0)
-        {
-            yield return StartCoroutine(WaitIfStressed());
-
-            eatTimer -= Time.deltaTime;
-            yield return null;
-        }
-
-        // 3. Si gira e se ne va
-        anim.SetTrigger("doWalk");
-        transform.Rotate(0, 180, 0);
-        timer = 3f;
-        while (timer > 0)
-        {
-            yield return StartCoroutine(WaitIfStressed());
-
-            transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
-            timer -= Time.deltaTime;
-            yield return null;
-        }
-
-        gameObject.SetActive(false);
-        isRunning = false;
     }
 
-    // Ferma il tempo e l'animazione se il battito è troppo alto
     private IEnumerator WaitIfStressed()
     {
-        // Se il battito supera la soglia (e ignoriamo lo 0 di quando il sensore è disconnesso)
         if (udpReceiver != null && udpReceiver.currentHeartRate > sogliaBattito)
         {
-            anim.speed = 0; // Mette in pausa l'animazione del cavallo
+            anim.speed = 0;
 
-            // Aspetta finché il battito non scende di nuovo
             yield return new WaitUntil(() => udpReceiver.currentHeartRate <= sogliaBattito);
 
-            anim.speed = 1; // Fa ripartire l'animazione
+            anim.speed = 1;
         }
     }
 }

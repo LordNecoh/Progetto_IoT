@@ -129,6 +129,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 685195320120420345, guid: 512b72c73a22e904d87662ebca8eb1e1, type: 3}
   m_PrefabInstance: {fileID: 1729828633}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &57029783 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1680501587, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 441087506}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &85199953 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1778994357615247706, guid: ef62619642b0df743b22dd5120c6ac4d, type: 3}
@@ -792,6 +797,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1680501587, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 655805644}
     - targetCorrespondingSourceObject: {fileID: 1767192434, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 766785413}
@@ -801,9 +809,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1767192434, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1101550289}
-    - targetCorrespondingSourceObject: {fileID: 1767192434, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 655805644}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1767192433, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       insertIndex: -1
@@ -847,6 +852,7 @@ MonoBehaviour:
   currentHeartRate: 0
   currentRespiratoryRate: 0
   currentAcceleration: {x: 0, y: 0, z: 0}
+  currentEcgData: '[]'
 --- !u!4 &447324702
 Transform:
   m_ObjectHideFlags: 0
@@ -887,9 +893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3534c2b04ee9a3c4aaa6e986665acc0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UbidotsStreamer
-  token: BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH
-  deviceLabel: visore-vr
-  sendInterval: 2
   gazeTracker: {fileID: 1782147980}
 --- !u!114 &447324705
 MonoBehaviour:
@@ -918,6 +921,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirebaseReportSender
   databaseURL: https://simulazionevr-default-rtdb.europe-west1.firebasedatabase.app/
   cartellaSalvataggio: Sessioni_VR
+  ricevitoreDati: {fileID: 447324701}
+  calcolatoreVelocita: {fileID: 447324703}
 --- !u!114 &447324707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8444,19 +8449,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 363737998}
+    m_TransformParent: {fileID: 57029783}
     m_Modifications:
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.38100004
+      value: -0.993
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.021000028
+      value: 1.497
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.96000004
+      value: 0.321
       objectReference: {fileID: 0}
     - target: {fileID: 1283359287461812240, guid: eac9c3e23aa2ac548a07373337ebdaaa, type: 3}
       propertyPath: m_LocalRotation.w
