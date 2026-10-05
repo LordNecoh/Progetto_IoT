@@ -8,7 +8,7 @@ public class UbidotsStreamer : MonoBehaviour
     [Header("Credenziali Ubidots")]
     private readonly string token = "BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH";
     private readonly string deviceLabel = "visore-vr";
-    private readonly float sendInterval = 1.0f; 
+    public readonly float sendInterval = 4.0f; 
 
     [Header("Sorgenti Dati (Trascina gli script qui)")]
     private UDPReceiver udpReceiver;
@@ -44,7 +44,22 @@ public class UbidotsStreamer : MonoBehaviour
                 string obj = gazeTracker.currentLookedObject;
 
 
-                int directionNum = dir == "[FORWARD]" ? 1 : 0;
+                int directionNum = 0;
+                switch (gazeTracker.currentDirection)
+                {
+                    case "[FORWARD]":
+                        directionNum = 0;
+                        break;
+                    case "[RIGHT]":
+                        directionNum = 1;
+                        break;
+                    case "[LEFT]":
+                        directionNum = 2;
+                        break;
+                    case "[BACK]":
+                        directionNum = 3;
+                        break;
+                }
 
                 //JSON payload for Ubidots
                 // "context" is used by Ubidots to save text attached to a numeric value (we use the angle)
