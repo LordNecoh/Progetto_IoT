@@ -5,17 +5,19 @@ public class SpeedCalculator : MonoBehaviour
     [Header("Riferimenti")]
     private UDPReceiver udpReceiver;
 
-    [Header("Impostazioni di Calcolo")]
-    private readonly float baseGravity = 9.81f;         // Standard base gravity value in m/s�
-    private readonly float movementThreshold = 1.5f;      // Under this threshold, the movement is considered negligible
-    private readonly float speedMultiplier = 1.2f; 
+    [Header("Taratura Camminata")]
+    public float baseGravity = 9.81f;
+    public float stepThreshold = 1.2f;    // Forza netta per far scattare un passo (prova tra 1.0 e 2.0)
+    public float stepCooldown = 0.35f;    // Tempo minimo tra due passi (evita doppi conteggi)
+    public float strideLength = 0.7f;     // Lunghezza media di un passo (0.7 metri)
 
-    private readonly float smoothing = 2f;               // How quickly the speed adapts (smoothing)
+    [Header("Statistiche Reali")]
+    public int stepCount = 0;             // Passi totali
+    public float totalDistance = 0f;      // Metri percorsi
+    public float currentSpeed = 0f;       // Velocità attuale (m/s)
 
-    [Header("Risultati")]
-    public float currentSpeed = 0f;           // La velocit� calcolata (es. in m/s o km/h)
-
-    private float intensitaSmussata = 0f;
+    private float lastStepTime = 0f;
+    private float targetSpeed = 0f;
 
     private void Start()
     {
@@ -29,13 +31,36 @@ public class SpeedCalculator : MonoBehaviour
         float magnitude = udpReceiver.currentAcceleration.magnitude;
         float movementForce = Mathf.Abs(magnitude - baseGravity);
 
-        if (movementForce < movementThreshold)
+        // 1. RILEVAMENTO DEL PASSO (Peak Detection)
+        // Se l'accelerazione supera la soglia e è passato abbastanza tempo dall'ultimo passo...
+        if (movementForce > stepThreshold && Time.time - lastStepTime > stepCooldown)
         {
-            movementForce  = 0f;
+            float timeSinceLastStep = Time.time - lastStepTime;
+            lastStepTime = Time.time;
+            
+            // Aggiorniamo i contatori
+            stepCount++;
+            totalDistance += strideLength;
+
+            // La velocità è semplicemente lo Spazio diviso il Tempo (m/s)
+            if (timeSinceLastStep > 0)
+            {
+                targetSpeed = strideLength / timeSinceLastStep;
+                
+                // Filtro di sicurezza: se la velocità calcolata è assurda (es. oltre 4 m/s), la cappiamo
+                if (targetSpeed > 4f) targetSpeed = 4f; 
+            }
         }
 
-        intensitaSmussata = Mathf.Lerp(intensitaSmussata, movementForce, Time.deltaTime * smoothing);
+        // 2. GESTIONE DA FERMO
+        // Se non facciamo passi per più di 1.2 secondi, stiamo rallentando o ci siamo fermati
+        if (Time.time - lastStepTime > 1.2f)
+        {
+            targetSpeed = 0f;
+        }
 
-        currentSpeed = intensitaSmussata * speedMultiplier;
+        // 3. FLUIDITÀ VISIVA
+        // Smussiamo la velocità in modo che non vada a scatti ma salga e scenda dolcemente
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 2.5f);
     }
 }
