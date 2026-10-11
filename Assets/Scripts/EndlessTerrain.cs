@@ -4,7 +4,7 @@ public class EndlessTerrain : MonoBehaviour
 {
     private SpeedCalculator speedCalculator;
     private readonly float terrainLength = 173f;
-    private readonly float speedMultiplier = 1.70f; //Per regolare la velocità del terreno rispetto alla velocità del giocatore
+    private readonly float speedMultiplier = 1.9f; //Per regolare la velocità del terreno rispetto alla velocità del giocatore
 
     private void Start()
     {

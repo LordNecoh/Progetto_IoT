@@ -12,6 +12,8 @@ public class LLMReport : MonoBehaviour
     [Header("Impostazioni API Gemini")]
     private readonly string primaryModel = "gemini-3.1-flash-lite";
     private readonly string fallbackModel = "gemma-4-31b-it";
+    private readonly string apiKey = ""; 
+
 
     [Header("UI Elementi")]
     public GameObject popupPanel;
@@ -57,7 +59,7 @@ public class LLMReport : MonoBehaviour
         foreach (string currentModel in modelsToTry)
         {
             reportText.text = $"Analisi in corso con {currentModel}...\nAttendere prego.";
-            string url = $"https://generativelanguage.googleapis.com/v1beta/models/{currentModel}:generateContent?key={SecretsManager.GeminiKey}";
+            string url = $"https://generativelanguage.googleapis.com/v1beta/models/{currentModel}:generateContent?key={apiKey}";
 
             using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
             {

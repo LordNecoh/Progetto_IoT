@@ -7,7 +7,8 @@ public class UbidotsStreamer : MonoBehaviour
 {
     [Header("Credenziali Ubidots")]
     private readonly string deviceLabel = "visore-vr";
-    public readonly float sendInterval = 4.0f; 
+    public readonly float sendInterval = 4.0f;
+    private readonly string ubidotsToken = "BBUS-5dPfeHSYj06CZ2cG5r5CJZhW6X6xSH";
 
     [Header("Sorgenti Dati (Trascina gli script qui)")]
     private UDPReceiver udpReceiver;
@@ -103,7 +104,7 @@ public class UbidotsStreamer : MonoBehaviour
             request.downloadHandler = new DownloadHandlerBuffer();
 
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("X-Auth-Token", SecretsManager.UbidotsKey);
+            request.SetRequestHeader("X-Auth-Token", ubidotsToken);
 
             yield return request.SendWebRequest();
 

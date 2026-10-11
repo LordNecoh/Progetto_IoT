@@ -7,8 +7,8 @@ public class SpeedCalculator : MonoBehaviour
 
     [Header("Taratura Camminata")]
     private float baseGravity = 9.81f;
-    private float stepThreshold = 1.2f;    // Forza netta per far scattare un passo (prova tra 1.0 e 2.0)
-    private float stepCooldown = 0.55f;    // Tempo minimo tra due passi (evita doppi conteggi)
+    private float stepThreshold = 1.0f;    // Forza netta per far scattare un passo (prova tra 1.0 e 2.0)
+    private float stepCooldown = 0.20f;    // Tempo minimo tra due passi (evita doppi conteggi)
     private float strideLength = 0.7f;     // Lunghezza media di un passo (0.7 metri)
 
     [Header("Statistiche Reali")]
