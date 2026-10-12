@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -16,7 +17,7 @@ public class FirebaseReportSender : MonoBehaviour
     [System.Serializable]
     public class Statistiche
     {
-        public string unita; // <-- NUOVO: Aggiunge l'unità di misura nel JSON
+        public string unita; 
         public double media;
         public double massima = -1;
         public string timestamp_max = "";
@@ -29,10 +30,15 @@ public class FirebaseReportSender : MonoBehaviour
     {
         public string data_inizio;
         public string durata_sessione; 
-        public string distanza_percorsa; // <-- Convertito in stringa per ospitare la "m"
+        public string distanza_percorsa; 
+        public int numero_passi;                     // Numero totale di passi effettuati
         public Statistiche frequenza_cardiaca;
         public Statistiche frequenza_respiratoria;
         public Statistiche velocita;
+        
+        [Header("Dati ECG Sessione")]
+        public int sampling_rate_ecg_hz = 128;      // Frequenza ECG
+        public string ecg_data;                      // Unica stringa con tutti i campioni separati da virgola
     }
 
     private bool sessioneAttiva = false;
@@ -42,6 +48,10 @@ public class FirebaseReportSender : MonoBehaviour
 
     private float sommaCuore = 0, sommaRespiro = 0, sommaVelocita = 0;
     private int campionamenti = 0;
+
+    // Buffer per raccogliere i campioni ECG a 128Hz durante la sessione
+    private List<float> ecgSamplesBuffer = new List<float>();
+    private string lastProcessedEcgString = "";
 
     private ReportSessione reportAttuale;
 
@@ -61,15 +71,17 @@ public class FirebaseReportSender : MonoBehaviour
         campionamenti = 0;
         sommaCuore = 0; sommaRespiro = 0; sommaVelocita = 0;
 
+        ecgSamplesBuffer.Clear();
+        lastProcessedEcgString = "";
+
         idGiocatoreCorrente = "Giocatore_" + System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
         reportAttuale = new ReportSessione
         {
             data_inizio = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            // Assegniamo le unità di misura corrette per ogni metrica
             frequenza_cardiaca = new Statistiche { unita = "bpm" },
             frequenza_respiratoria = new Statistiche { unita = "rpm" },
-            velocita = new Statistiche { unita = "m/s" } 
+            velocita = new Statistiche { unita = "m/s" }
         };
 
         InvokeRepeating(nameof(RaccogliDatiStatistici), 1f, 1f);
@@ -79,9 +91,35 @@ public class FirebaseReportSender : MonoBehaviour
     {
         if (!sessioneAttiva) return;
 
+        // Calcolo distanza percorsa in tempo reale
         if (calcolatoreVelocita != null)
         {
             distanzaTotale += calcolatoreVelocita.currentSpeed * Time.deltaTime;
+        }
+
+        // Cattura continua dei campioni ECG in arrivo da UDPReceiver
+        if (ricevitoreDati != null)
+        {
+            string currentData = ricevitoreDati.currentEcgData;
+            if (!string.IsNullOrEmpty(currentData) && currentData != "[]" && currentData != lastProcessedEcgString)
+            {
+                lastProcessedEcgString = currentData;
+                ParseAndAppendEcgSamples(currentData);
+            }
+        }
+    }
+
+    private void ParseAndAppendEcgSamples(string rawArray)
+    {
+        string clean = rawArray.Replace("[", "").Replace("]", "").Replace("\n", "").Replace("\r", "").Replace(" ", "");
+        string[] values = clean.Split(',');
+
+        for (int i = 0; i < values.Length; i++)
+        {
+            if (float.TryParse(values[i].Trim(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float sample))
+            {
+                ecgSamplesBuffer.Add(sample);
+            }
         }
     }
 
@@ -131,7 +169,7 @@ public class FirebaseReportSender : MonoBehaviour
         sessioneAttiva = false;
         CancelInvoke(nameof(RaccogliDatiStatistici));
 
-        // Formattazione Orologio
+        // Formattazione durata
         float durataSecondi = Time.time - tempoInizio;
         System.TimeSpan t = System.TimeSpan.FromSeconds(durataSecondi);
         
@@ -140,9 +178,17 @@ public class FirebaseReportSender : MonoBehaviour
         else
             reportAttuale.durata_sessione = string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
 
-        // Aggiunta unità di misura (m) alla distanza finale
+        // Distanza e Passi
         double distanzaArrotondata = System.Math.Round((double)distanzaTotale, 2);
         reportAttuale.distanza_percorsa = distanzaArrotondata.ToString() + " m";
+        
+        if (calcolatoreVelocita != null)
+        {
+            reportAttuale.numero_passi = calcolatoreVelocita.stepCount;
+        }
+
+        // Unisce tutti i campioni ECG in un'unica stringa separata da virgole
+        reportAttuale.ecg_data = string.Join(";", ecgSamplesBuffer);
 
         // Calcolo Medie
         if (campionamenti > 0)
@@ -179,7 +225,7 @@ public class FirebaseReportSender : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[FIREBASE INVIATO] Successo! Cartella creata: {idGiocatoreCorrente}");
+                Debug.Log($"[FIREBASE INVIATO] Successo! Sessione salvata nel nodo: {cartellaSalvataggio}/{idGiocatoreCorrente}");
             }
         }
     }

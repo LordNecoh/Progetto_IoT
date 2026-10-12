@@ -9,7 +9,7 @@ using UnityEngine;
 public class UDPReceiver : MonoBehaviour
 {
     [Header("Impostazioni di Rete")]
-    public int port = 8888; //Check corrispondence with howdy app!!!
+    public int port = 8888; // Check correspondence with Howdy app!
 
     private UdpClient udpClient;
     private Thread receiveThread;
@@ -22,7 +22,7 @@ public class UDPReceiver : MonoBehaviour
     public int currentRespiratoryRate = 0;
     public Vector3 currentAcceleration = Vector3.zero;
     
-    // NUOVO: Variabile per salvare l'array dell'ECG in formato testo
+    // Variabile per salvare l'array dell'ECG in formato testo
     public string currentEcgData = "[]"; 
 
     void Start()
@@ -61,16 +61,31 @@ public class UDPReceiver : MonoBehaviour
         {
             string cleanJson = message.Replace(" ", "");
 
-            // Dati Sensore ComfTech
+            // Dati Sensore ComfTech - Heart Rate
             if (cleanJson.Contains("\"MeasureType\":0"))
             {
-                currentHeartRate = ExtractSingleValue(cleanJson);
+                int newHr = ExtractSingleValue(cleanJson);
+                if (newHr >= 40 && newHr <= 220)
+                {
+                    currentHeartRate = newHr;
+                }
             }
+            // Dati Sensore ComfTech - Respiratory Rate (Con solo Delta Check)
             else if (cleanJson.Contains("\"MeasureType\":1"))
             {
-                currentRespiratoryRate = ExtractSingleValue(cleanJson);
+                int newResp = ExtractSingleValue(cleanJson);
+                
+                // Controllo di salto (Delta Check): scarta sbalzi improvvisi rispetto all'ultimo valore valido
+                if (currentRespiratoryRate == 0 || Mathf.Abs(newResp - currentRespiratoryRate) <= 12)
+                {
+                    currentRespiratoryRate = newResp;
+                }
+                else
+                {
+                    Debug.LogWarning($"[Filtro Respiro] Rilevato salto anomalo ({newResp} RPM vs {currentRespiratoryRate} RPM): valore ignorato.");
+                }
             }
-            // NUOVO: Dati ECG (MeasureType 6)
+            // Dati ECG (MeasureType 6)
             else if (cleanJson.Contains("\"MeasureType\":6"))
             {
                 currentEcgData = ExtractArrayString(cleanJson);
@@ -83,7 +98,6 @@ public class UDPReceiver : MonoBehaviour
         }
     }
 
-    // Estrae l'array di 3 valori dalle parentesi quadre
     private Vector3 ExtractVector3(string data)
     {
         int startIndex = data.IndexOf("[");
@@ -121,7 +135,12 @@ public class UDPReceiver : MonoBehaviour
 
         startIndex += searchStr.Length;
         int endIndex = json.IndexOf(",", startIndex);
-        if (endIndex == -1) endIndex = json.IndexOf("}", startIndex); // Se è l'ultimo elemento
+        if (endIndex == -1) endIndex = json.IndexOf("}", startIndex); 
+        
+        int bracketIndex = json.IndexOf("]", startIndex);
+        if (bracketIndex != -1 && bracketIndex < endIndex) endIndex = bracketIndex;
+
+        if (endIndex == -1) return 0;
 
         string valueStr = json.Substring(startIndex, endIndex - startIndex).Trim();
 
@@ -133,17 +152,15 @@ public class UDPReceiver : MonoBehaviour
         return 0;
     }
 
-    // NUOVO: Estrae l'intero array dell'ECG come stringa testuale (es. "[-0.02, -0.019, ... ]")
     private string ExtractArrayString(string json)
     {
         int startIndex = json.IndexOf("\"Value\":[");
         if (startIndex == -1) return "[]";
         
-        startIndex += 8; // Salta la parola "Value": e si posiziona sulla parentesi [
+        startIndex += 8; 
         int endIndex = json.IndexOf("]", startIndex);
         if (endIndex == -1) return "[]";
 
-        // Restituisce la stringa compresa tra le parentesi quadre
         return json.Substring(startIndex, endIndex - startIndex + 1);
     }
 

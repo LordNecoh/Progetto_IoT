@@ -5,16 +5,23 @@ public class SpeedCalculator : MonoBehaviour
     [Header("Riferimenti")]
     private UDPReceiver udpReceiver;
 
-    [Header("Taratura Camminata")]
-    private float baseGravity = 9.81f;
-    private float stepThreshold = 1.0f;    // Forza netta per far scattare un passo (prova tra 1.0 e 2.0)
-    private float stepCooldown = 0.20f;    // Tempo minimo tra due passi (evita doppi conteggi)
-    private float strideLength = 0.7f;     // Lunghezza media di un passo (0.7 metri)
+    [Header("Taratura Camminata (Fluida e Controllata)")]
+    public float baseGravity = 9.81f;
+    public float walkThreshold = 1.5f;    
+    public float walkCooldown = 0.55f;    
+    public float walkStride = 0.7f;       
+    public float maxWalkSpeed = 1.5f;     // Blocco anti-sgasata per la camminata
+
+    [Header("Taratura Corsa (Super Veloce e Scattante)")]
+    public float runThreshold = 2.2f;     // Leggermente più sensibile per attivare la corsa al volo
+    public float runCooldown = 0.23f;     // Permette passi ancora più serrati
+    public float runStride = 1.6f;        // Falcata allungata a 1.6 metri per volare via
+    public float maxRunSpeed = 9.5f;      // Tetto massimo innalzato a 9.5 m/s
 
     [Header("Statistiche Reali")]
-    public int stepCount = 0;             // Passi totali
-    public float totalDistance = 0f;      // Metri percorsi
-    public float currentSpeed = 0f;       // Velocità attuale (m/s)
+    public int stepCount = 0;             
+    public float totalDistance = 0f;      
+    public float currentSpeed = 0f;       
 
     private float lastStepTime = 0f;
     private float targetSpeed = 0f;
@@ -31,36 +38,42 @@ public class SpeedCalculator : MonoBehaviour
         float magnitude = udpReceiver.currentAcceleration.magnitude;
         float movementForce = Mathf.Abs(magnitude - baseGravity);
 
-        // 1. RILEVAMENTO DEL PASSO (Peak Detection)
-        // Se l'accelerazione supera la soglia e è passato abbastanza tempo dall'ultimo passo...
-        if (movementForce > stepThreshold && Time.time - lastStepTime > stepCooldown)
+        bool isRunning = movementForce > runThreshold;
+        
+        float activeThreshold = isRunning ? runThreshold : walkThreshold;
+        float activeCooldown = isRunning ? runCooldown : walkCooldown;
+        float activeStride = isRunning ? runStride : walkStride;
+
+        // 1. RILEVAMENTO DEL PASSO
+        if (movementForce > activeThreshold && Time.time - lastStepTime > activeCooldown)
         {
             float timeSinceLastStep = Time.time - lastStepTime;
             lastStepTime = Time.time;
             
-            // Aggiorniamo i contatori
             stepCount++;
-            totalDistance += strideLength;
+            totalDistance += activeStride;
 
-            // La velocità è semplicemente lo Spazio diviso il Tempo (m/s)
             if (timeSinceLastStep > 0)
             {
-                targetSpeed = strideLength / timeSinceLastStep;
+                targetSpeed = activeStride / timeSinceLastStep;
                 
-                // Filtro di sicurezza: se la velocità calcolata è assurda (es. oltre 4 m/s), la cappiamo
-                if (targetSpeed > 4f) targetSpeed = 4f; 
+                // Limiti di velocità separati
+                float speedLimit = isRunning ? maxRunSpeed : maxWalkSpeed;
+                if (targetSpeed > speedLimit) targetSpeed = speedLimit; 
             }
         }
 
         // 2. GESTIONE DA FERMO
-        // Se non facciamo passi per più di 1.2 secondi, stiamo rallentando o ci siamo fermati
-        if (Time.time - lastStepTime > 1.2f)
+        if (Time.time - lastStepTime > 0.8f)
         {
             targetSpeed = 0f;
         }
 
-        // 3. FLUIDITÀ VISIVA
-        // Smussiamo la velocità in modo che non vada a scatti ma salga e scenda dolcemente
-        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 2.5f);
+        // 3. FLUIDITÀ E REATTIVITÀ
+        float accelerationSmooth = isRunning ? 6.0f : 2.5f;
+        float decelerationSmooth = 4.5f; 
+        
+        float currentLerp = (targetSpeed == 0f) ? decelerationSmooth : accelerationSmooth;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * currentLerp);
     }
 }
