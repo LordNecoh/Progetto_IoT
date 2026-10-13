@@ -38,29 +38,32 @@ public class UbidotsStreamer : MonoBehaviour
                 int respRate = udpReceiver.currentRespiratoryRate;
                 float speed = speedCalculator.currentSpeed;
 
-                //Gaze variables
+                // Gaze variables
                 float angle = gazeTracker.currentVisualAngle;
                 string dir = gazeTracker.currentDirection;
                 string obj = gazeTracker.currentLookedObject;
 
-
-                int directionNum = 1;
-                switch (gazeTracker.currentDirection)
+                string dirText = "AVANTI";
+                switch (dir)
                 {
-                    case "[FORWARD]": directionNum = 1; break;
-                    case "[RIGHT]":   directionNum = 2; break;
-                    case "[LEFT]":    directionNum = 3; break;
-                    case "[BACK]":    directionNum = 4; break;
+                    case "[FORWARD]": dirText = "AVANTI"; break;
+                    case "[RIGHT]":   dirText = "DESTRA"; break;
+                    case "[LEFT]":    dirText = "SINISTRA"; break;
+                    case "[BACK]":    dirText = "DIETRO"; break;
                 }
 
-                //JSON payload for Ubidots
-                // "context" is used by Ubidots to save text attached to a numeric value (we use the angle)
+                // JSON payload aggiornato con il testo nel context
                 string jsonPayload = $@"{{
                     ""heart_rate"": {heartRate},
                     ""respiratory_rate"": {respRate},
                     ""speed"": {speed.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)},
                     ""gaze_angle"": {angle.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)},
-                    ""gaze_direction"": {directionNum},
+                    ""gaze_direction"": {{
+                        ""value"": 1,
+                        ""context"": {{
+                            ""label"": ""{dirText}""
+                        }}
+                    }},
                     ""looked_object"": {{
                         ""value"": 1,
                         ""context"": {{
