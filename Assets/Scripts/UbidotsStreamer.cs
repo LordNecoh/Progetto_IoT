@@ -44,21 +44,13 @@ public class UbidotsStreamer : MonoBehaviour
                 string obj = gazeTracker.currentLookedObject;
 
 
-                int directionNum = 0;
+                int directionNum = 1;
                 switch (gazeTracker.currentDirection)
                 {
-                    case "[FORWARD]":
-                        directionNum = 0;
-                        break;
-                    case "[RIGHT]":
-                        directionNum = 1;
-                        break;
-                    case "[LEFT]":
-                        directionNum = 2;
-                        break;
-                    case "[BACK]":
-                        directionNum = 3;
-                        break;
+                    case "[FORWARD]": directionNum = 1; break;
+                    case "[RIGHT]":   directionNum = 2; break;
+                    case "[LEFT]":    directionNum = 3; break;
+                    case "[BACK]":    directionNum = 4; break;
                 }
 
                 //JSON payload for Ubidots
