@@ -47,8 +47,8 @@ public class UbidotsStreamer : MonoBehaviour
                 switch (dir)
                 {
                     case "[FORWARD]": dirText = "AVANTI"; break;
-                    case "[RIGHT]":   dirText = "DESTRA"; break;
-                    case "[LEFT]":    dirText = "SINISTRA"; break;
+                    case "[DESTRA]":   dirText = "DESTRA"; break;
+                    case "[SINISTRA]":    dirText = "SINISTRA"; break;
                     case "[BACK]":    dirText = "DIETRO"; break;
                 }
 

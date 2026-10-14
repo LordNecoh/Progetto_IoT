@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//The goal of this script is to make GameManager persistent across different scenes in Unity.
 public class PersistentObject : MonoBehaviour
 {
     private static PersistentObject instance;

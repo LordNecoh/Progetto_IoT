@@ -12,7 +12,7 @@ public class LLMReport : MonoBehaviour
     [Header("Impostazioni API Gemini")]
     private readonly string primaryModel = "gemini-3.1-flash-lite";
     private readonly string fallbackModel = "gemma-4-31b-it";
-    private readonly string apiKey = ""; 
+    private readonly string apiKey = ""; //INSERIRE PROPRIA CHIAVE GOOGLE API SERVICES QUI
 
 
     [Header("UI Elementi")]
@@ -76,7 +76,7 @@ public class LLMReport : MonoBehaviour
                     if (response != null && response.candidates != null && response.candidates.Length > 0)
                     {
                         reportText.text = response.candidates[0].content.parts[0].text;
-                        yield return null; // Attendere un frame per assicurarsi che il layout sia aggiornato
+                        yield return null; // Attende un frame per assicurarsi che il layout sia aggiornato (Sennò dava problemi)
                         Canvas.ForceUpdateCanvases();
                         LayoutRebuilder.ForceRebuildLayoutImmediate(reportText.transform.parent.GetComponent<RectTransform>());
                         success = true;

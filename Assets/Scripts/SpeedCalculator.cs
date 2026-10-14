@@ -64,15 +64,15 @@ public class SpeedCalculator : MonoBehaviour
         }
 
         // 2. GESTIONE DA FERMO
-        if (Time.time - lastStepTime > 0.8f)
+        if (Time.time - lastStepTime > 1.2f)
         {
             targetSpeed = 0f;
         }
 
         // 3. FLUIDITÀ E REATTIVITÀ
-        float accelerationSmooth = isRunning ? 6.0f : 2.5f;
-        float decelerationSmooth = 4.5f; 
-        
+        float accelerationSmooth = isRunning ? 3.0f : 1.5f;
+        float decelerationSmooth = 6.0f;
+
         float currentLerp = (targetSpeed == 0f) ? decelerationSmooth : accelerationSmooth;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * currentLerp);
     }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+//To make the UI elements more interactive and responsive, this script adds a "juice" effect to UI elements when hovered over or clicked. It scales the UI element up when hovered and scales it down when clicked, providing visual feedback to the user.
 public class UIJuice : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
     private Vector3 originalScale;

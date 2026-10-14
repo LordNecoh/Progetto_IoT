@@ -3,8 +3,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
+//Alla fine non usato perchè dava problemi
+//La logica sarebbe avere un file .json non pubblicato sul git che fa un po'  da .env per non mettere le chiavi in chiaro nel codice
 public class SecretsManager : MonoBehaviour
 {
+    
     [System.Serializable]
     private class Secrets { public string geminiKey; public string ubidotsKey; }
 

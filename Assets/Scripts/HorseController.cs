@@ -27,7 +27,6 @@ public class HorseController : MonoBehaviour
     {
         isRunning = true;
 
-        // Loop infinito
         while (true)
         {
             // 1. Cammina in avanti
